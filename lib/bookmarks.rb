@@ -2,14 +2,15 @@ require 'pg'
 
 class Bookmarks
 
-  @conn = PG.connect( dbname: 'bookmark_manager' )
+  
 
   def self.all
+    if ENV['RACK_ENV'] == 'test'
+      @conn = PG.connect( dbname: 'bookmark_manager_test' )
+    else
+      @conn = PG.connect( dbname: 'bookmark_manager' )
+    end
     retrieve_urls
-  end
-
-  def self.add(url)
-    add_url(url)
   end
 
   def self.retrieve_urls
@@ -18,16 +19,17 @@ class Bookmarks
     end
   end
 
-  def add_url()
-    @conn.exec( "INSERT INTO bookmarks(url) VALUES(#{url})") 
+  def self.add_url(url)
+    if ENV['RACK_ENV'] == 'test'
+      @conn = PG.connect( dbname: 'bookmark_manager_test' )
+    else
+      @conn = PG.connect( dbname: 'bookmark_manager' )
+    end
+    @conn.exec( "INSERT INTO bookmarks(url) VALUES('#{url}');") 
   end
 
   def self.formater(data)
-    urls = []
-    data.each do |line|
-      urls << line['url']
-    end
-    urls
+    data.map { |line| line['url'] }
   end
 
 end

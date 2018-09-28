@@ -4,16 +4,17 @@ describe Bookmarks do
   
 
   describe '#all' do
-    # it 'return array of bookmarks' do
-    #   allow(Bookmarks).to receive(:retrieve_urls) {
-    #     [{"url"=>"http://www.makersacademy.com"},
-    #       {"url"=>"http://www.google.com"},
-    #       {"url"=>"http://www.destroyallsoftware.com"}]
-    #   }
-    #   expect(Bookmarks.all).to eq( ["http://www.makersacademy.com", "http://www.google.com", "http://www.destroyallsoftware.com"] )
-    #   # expect(Bookmarks.all).to include('www.dogs.com')
-    #   # expect(Bookmarks.all).to include('www.amy.com')
-    # end
+    it 'return all the bookmarks' do
+      conn = PG.connect(dbname: 'bookmark_manager_test')
+      conn.exec("INSERT INTO bookmarks(url) VALUES('http://www.makersacademy.com');")
+      conn.exec("INSERT INTO bookmarks(url) VALUES('http://www.google.com');")
+      conn.exec("INSERT INTO bookmarks(url) VALUES('http://www.destroyallsoftware.com');")
+      bookmarks = Bookmarks.all
+      
+      expect(bookmarks).to include('http://www.makersacademy.com')
+      expect(bookmarks).to include('http://www.google.com')
+      expect(bookmarks).to include('http://www.destroyallsoftware.com')
+    end
   end
 
 end

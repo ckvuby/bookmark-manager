@@ -4,10 +4,14 @@ require File.join(File.dirname(__FILE__), '..', '/app/bookmark_web.rb')
 require 'sinatra/base'
 require 'capybara'
 require 'capybara/rspec'
+require 'setup_test_database'
 
 Capybara.app = BookmarkManager
 
 RSpec.configure do |config|
+  config.before(:each) do
+    truncate_bookmark_table
+  end
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
